@@ -18,8 +18,12 @@ document.getElementById("student-name").innerText = studentName;
 // Fonction pour charger les compétences de l'élève sélectionné
 async function loadStudentData() {
     try {
+        console.log("🔄 Tentative de récupération des données...");
         const response = await fetch(apiURL);
         const text = await response.text();
+        
+        console.log("📄 Réponse reçue :", text); // Vérification
+
         const jsonData = JSON.parse(text.substr(47).slice(0, -2)); // Convertit en JSON
 
         let studentData = document.getElementById("student-data");
@@ -27,7 +31,8 @@ async function loadStudentData() {
 
         let studentFound = false;
 
-        jsonData.table.rows.forEach(row => {
+        // 🔹 On saute la première ligne qui contient les titres des colonnes
+        jsonData.table.rows.slice(1).forEach(row => { 
             if (row.c[0]?.v === studentName) { // Vérifie si c’est l’élève sélectionné
                 studentFound = true;
                 studentData.innerHTML = `<table border="1">
@@ -43,13 +48,15 @@ async function loadStudentData() {
         });
 
         if (!studentFound) {
+            console.warn("⚠️ Aucun élève trouvé !");
             studentData.innerHTML = "<p>Aucune donnée trouvée pour cet élève.</p>";
         }
 
     } catch (error) {
-        console.error("Erreur lors de la récupération des données :", error);
-        document.getElementById("student-data").innerHTML = "<p>Erreur de chargement des compétences.</p>";
+        console.error("🚨 Erreur lors de la récupération des données :", error);
+        document.getElementById("student-data").innerHTML = "<p>Erreur de chargement des compétences. Vérifiez l'ID Google Sheets et les permissions.</p>";
     }
 }
+
 
 // Charger les compétences de l’élève au d
