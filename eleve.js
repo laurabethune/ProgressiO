@@ -1,55 +1,56 @@
-console.log("🚀 Chargement du script eleve.js...");
+console.log("Chargement du script eleve.js...");
 
-// 1️⃣ Récupération du paramètre `name` dans l'URL
+// Récupération du nom de l'élève depuis l'URL
 const urlParams = new URLSearchParams(window.location.search);
-const studentName = urlParams.get("name");
+const studentName = urlParams.get('name'); 
+console.log("Nom de l'élève sélectionné :", studentName);
 
-console.log("🔍 Paramètres URL détectés :", window.location.search);
-console.log("📌 Nom de l'élève récupéré :", studentName);
+// Sélection des éléments HTML
+const studentData = document.getElementById("student-data");
+const studentNameElement = document.getElementById("student-name");
 
-// 2️⃣ Vérification et affichage du nom de l'élève
+// Affichage du nom de l'élève
 if (studentName) {
-    document.getElementById("student-name").textContent = studentName;
+    studentNameElement.textContent = studentName;
 } else {
-    console.error("❌ Aucun élève détecté dans l'URL.");
-    document.getElementById("student-data").innerHTML = "<p>⚠️ Élève non trouvé.</p>";
+    studentData.innerHTML = `<p>⚠️ Aucun élève trouvé !</p>`;
+    console.error("❌ Aucun élève trouvé dans l'URL !");
 }
 
-// 3️⃣ Définition de l'URL de l'API Google Sheets
-const apiURL = "https://script.google.com/macros/s/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/exec";
+// URL de l'API Google Sheets
+const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
 console.log("API URL :", apiURL);
 
-
-console.log("🌐 API URL :", apiURL);
-
-// 4️⃣ Récupération des données depuis Google Sheets
+// Fonction pour récupérer et afficher les données
 fetch(apiURL)
-    .then(response => response.text())
-    .then(data => {
-        console.log("✅ Données brutes reçues :", data);
-        
-        // Nettoyage des données Google Sheets
-        const jsonData = JSON.parse(data.substring(47, data.length - 2));
-        console.log("📊 Données JSON traitées :", jsonData);
+  .then(response => response.text()) // Google renvoie du texte, pas un JSON
+  .then(data => {
+      const jsonData = JSON.parse(data.substring(47).slice(0, -2)); // Extraction des données JSON
+      console.log("Données reçues :", jsonData);
 
-        // Chercher les infos de l'élève
-        const rows = jsonData.table.rows;
-        const studentData = rows.find(row => row.c[0].v === studentName);
+      const rows = jsonData.table.rows;
+      let studentFound = false;
 
-        if (studentData) {
-            document.getElementById("student-data").innerHTML = `
-                <p>Compétence 1 : ${studentData.c[1].v}</p>
-                <p>Compétence 2 : ${studentData.c[2].v}</p>
-                <p>Compétence 3 : ${studentData.c[3].v}</p>
-                <p>Badges : ${studentData.c[4].v}</p>
-            `;
-        } else {
-            document.getElementById("student-data").innerHTML = "<p>⚠️ Aucune donnée trouvée pour cet élève.</p>";
-        }
-    })
-    .catch(error => {
-        console.error("❌ Erreur lors de la récupération des données :", error);
-        document.getElementById("student-data").innerHTML = "<p>⚠️ Impossible de charger les données.</p>";
-    });
+      // Parcours des lignes pour trouver l'élève
+      for (let row of rows) {
+          const name = row.c[0]?.v || "Inconnu";
+          if (name.toLowerCase() === studentName.toLowerCase()) {
+              studentFound = true;
+              let htmlContent = `<p><strong>Compétence 1 :</strong> ${row.c[1]?.v || "❌ Non validé"}</p>`;
+              htmlContent += `<p><strong>Compétence 2 :</strong> ${row.c[2]?.v || "❌ Non validé"}</p>`;
+              htmlContent += `<p><strong>Compétence 3 :</strong> ${row.c[3]?.v || "❌ Non validé"}</p>`;
+              htmlContent += `<p><strong>Badges :</strong> ${row.c[4]?.v || "Aucun badge"}</p>`;
+              studentData.innerHTML = htmlContent;
+              break;
+          }
+      }
 
-
+      if (!studentFound) {
+          console.warn("⚠️ Aucun élève trouvé !");
+          studentData.innerHTML = `<p>⚠️ Impossible de charger les données.</p>`;
+      }
+  })
+  .catch(error => {
+      console.error("❌ Erreur lors de la récupération des données :", error);
+      studentData.innerHTML = `<p>⚠️ Erreur de connexion à Google Sheets.</p>`;
+  });
