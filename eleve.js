@@ -1,76 +1,71 @@
 console.log("Chargement du script eleve.js...");
 
-// Récupération du nom de l'élève dans l'URL
+// 🔹 Récupération du nom de l'élève dans l'URL
 const urlParams = new URLSearchParams(window.location.search);
-const studentName = urlParams.get('name'); 
+const studentName = urlParams.get('name'); // Ex: "Alex"
 
 console.log("Nom de l'élève sélectionné :", studentName);
 
-// Vérifier si un nom d'élève a été trouvé
+// Vérifier si un nom d'élève est bien trouvé
 if (!studentName) {
     console.error("❌ Aucun élève trouvé dans l'URL !");
+    document.getElementById("student-data").innerHTML = `<p>❌ Aucun élève sélectionné.</p>`;
 } else {
     console.log("✅ Élève détecté :", studentName);
 }
 
-// API Google Sheets
-const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
-console.log("API URL :", apiURL);
+// 🔹 URL de l'API Google Sheets
+const SHEET_ID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg";  // Remplace par TON ID
+const API_URL_COMPETENCES = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&tq=SELECT *&sheet=Compétences`;
 
-fetch(apiURL)
-    .then(response => response.text())
-    .then(data => {
-        // Nettoyage des données pour extraire uniquement le JSON
-        const jsonData = JSON.parse(data.substring(47, data.length - 2));
+// Fonction pour récupérer les compétences
+async function fetchCompetences() {
+    try {
+        const response = await fetch(API_URL_COMPETENCES);
+        const text = await response.text();
+        const jsonData = JSON.parse(text.substring(47, text.length - 2));
 
-        // Récupération des lignes du tableau
-        const rows = jsonData.table.rows;
+        const table = jsonData.table.cols.map(col => col.label);
+        const rows = jsonData.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
 
-        // Recherche des compétences de l'élève
-        let studentFound = false;
-        let studentDataDiv = document.getElementById("student-data");
-        let studentNameHeader = document.getElementById("student-name");
+        console.log("Données des compétences :", rows);
 
-        studentNameHeader.innerText = studentName;
+        // 🔹 Trouver la colonne de l'élève
+        const studentIndex = table.indexOf(studentName);
+        if (studentIndex === -1) {
+            console.warn("⚠️ Élève non trouvé dans la feuille Compétences !");
+            document.getElementById("student-data").innerHTML = `<p>⚠️ Aucune donnée trouvée pour ${studentName}.</p>`;
+            return;
+        }
 
+        // 🔹 Générer le tableau des compétences
+        let tableHTML = `<table border="1"><tr><th>Compétence</th><th>Niveau</th></tr>`;
         rows.forEach(row => {
-            let name = row.c[0]?.v;
-            if (name === studentName) {
-                studentFound = true;
-                let competence1 = row.c[1]?.v || "Non renseigné";
-                let competence2 = row.c[2]?.v || "Non renseigné";
-                let competence3 = row.c[3]?.v || "Non renseigné";
-                let badges = row.c[4]?.v || "Aucun badge";
-
-                // Conversion des niveaux
-                const levelMapping = {
-                    "✔️": "Expert",
-                    "❌": "Novice",
-                    "🔸": "Débrouillé",
-                    "⭐": "Averti"
-                };
-
-                competence1 = levelMapping[competence1] || competence1;
-                competence2 = levelMapping[competence2] || competence2;
-                competence3 = levelMapping[competence3] || competence3;
-
-                // Affichage des compétences
-                studentDataDiv.innerHTML = `
-                    <ul>
-                        <li><strong>Compétence 1 :</strong> ${competence1}</li>
-                        <li><strong>Compétence 2 :</strong> ${competence2}</li>
-                        <li><strong>Compétence 3 :</strong> ${competence3}</li>
-                        <li><strong>Badges :</strong> ${badges}</li>
-                    </ul>
-                `;
+            if (row[0]) {
+                let niveau = row[studentIndex] || "Non évalué";
+                let couleur = getCouleurNiveau(niveau);
+                tableHTML += `<tr><td>${row[0]}</td><td style="background-color:${couleur};">${niveau}</td></tr>`;
             }
         });
+        tableHTML += `</table>`;
+        document.getElementById("student-data").innerHTML = tableHTML;
 
-        if (!studentFound) {
-            studentDataDiv.innerHTML = `<p>⚠️ Aucun élève trouvé avec ce nom.</p>`;
-        }
-    })
-    .catch(error => {
-        console.error("Erreur lors du chargement des données :", error);
-        document.getElementById("student-data").innerHTML = `<p>⚠️ Impossible de charger les données.</p>`;
-    });
+    } catch (error) {
+        console.error("❌ Erreur lors du chargement des compétences :", error);
+        document.getElementById("student-data").innerHTML = `<p>❌ Impossible de charger les compétences.</p>`;
+    }
+}
+
+// 🔹 Fonction pour assigner des couleurs aux niveaux
+function getCouleurNiveau(niveau) {
+    switch (niveau.toLowerCase()) {
+        case "expert": return "#4CAF50";  // Vert
+        case "averti": return "#2196F3";  // Bleu
+        case "débrouillé": return "#FFC107";  // Jaune
+        case "novice": return "#F44336";  // Rouge
+        default: return "#E0E0E0";  // Gris
+    }
+}
+
+// 🔹 Charger les données
+fetchCompetences();
