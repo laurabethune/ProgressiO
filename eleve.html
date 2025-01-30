@@ -4,53 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fiche de Compétences</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- Assure-toi d'avoir ce fichier CSS -->
 </head>
 <body>
-    <h1>Fiche de Compétences</h1>
-    <h2 id="student-name"></h2>
+    <div class="container">
+        <h1>Fiche de Compétences</h1>
+        <h2 id="student-name"></h2>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Compétence</th>
-                <th>Niveau</th>
-            </tr>
-        </thead>
-        <tbody id="student-data">
-            <tr><td colspan="2">Chargement...</td></tr>
-        </tbody>
-    </table>
+        <div id="student-data">
+            <p>Chargement des compétences...</p>
+        </div>
 
-    <a href="index.html">Retour</a>
+        <a href="index.html" class="btn-retour">Retour</a>
+    </div>
 
-    <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycby-iInF7yef8ABF7Ik10a1PuVYBnxOZzTjvDsbGTf6reerS9tVd91qXH1QuBW3BXrTt/exec";  // Remplace par ton URL Google Apps Script
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const studentName = urlParams.get("name");
-        document.getElementById("student-name").textContent = studentName;
-
-        fetch(apiURL)
-            .then(response => response.json())
-            .then(data => {
-                let studentData = document.getElementById("student-data");
-                studentData.innerHTML = "";
-
-                if (!data[studentName]) {
-                    studentData.innerHTML = `<tr><td colspan="2">Aucune donnée trouvée.</td></tr>`;
-                    return;
-                }
-
-                data[studentName].forEach(entry => {
-                    let tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${entry.competence}</td><td>${entry.niveau}</td>`;
-                    studentData.appendChild(tr);
-                });
-            })
-            .catch(error => {
-                console.error("Erreur API :", error);
-            });
-    </script>
+    <script src="eleve.js"></script>
 </body>
 </html>
+
