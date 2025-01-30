@@ -68,3 +68,66 @@ td:contains("Novice") {
     background-color: #F44336; /* Rouge */
     color: white;
 }
+/* Centre le contenu */
+.container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Style du tableau */
+table {
+    width: 60%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 12px;
+    font-size: 16px;
+}
+
+th {
+    background-color: #4CAF50; /* Vert pour les titres */
+    color: white;
+}
+
+/* Couleurs selon le niveau */
+td {
+    background-color: #f2f2f2; /* Fond gris clair par défaut */
+}
+
+td:contains("Expert") {
+    background-color: #4CAF50; /* Vert */
+    color: white;
+}
+
+td:contains("Averti") {
+    background-color: #FFC107; /* Jaune */
+}
+
+td:contains("Débrouillé") {
+    background-color: #FF9800; /* Orange */
+}
+
+td:contains("Novice") {
+    background-color: #F44336; /* Rouge */
+    color: white;
+}
+
+/* Bouton retour */
+.btn-retour {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-retour:hover {
+    background-color: #0056b3;
+}
