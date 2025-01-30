@@ -1,39 +1,38 @@
-console.log("🚀 Chargement du script accueil.js...");
+console.log("📌 Chargement du script accueil.js...");
 
-// URL de l'API Google Sheets
-const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
+const apiURL = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:json";
 
-console.log("🌐 API URL :", apiURL);
+// Fonction pour récupérer les noms des élèves
+async function fetchStudents() {
+    try {
+        const response = await fetch(apiURL);
+        const text = await response.text();
+        const json = JSON.parse(text.substring(47, text.length - 2));
 
-fetch(apiURL)
-    .then(response => response.text())
-    .then(dataText => {
-        const jsonData = JSON.parse(dataText.substring(47).slice(0, -2)); // Nettoyage du JSON Google Sheets
+        // Récupérer les en-têtes de colonne (les noms des élèves)
+        const headers = json.table.cols.map(col => col.label).slice(1); // Ignorer la première colonne (Compétences)
+        
+        console.log("📝 Liste des élèves trouvés :", headers);
 
-        console.log("🛠️ Données JSON brutes :", jsonData);
+        // Affichage des élèves dans la page
+        const studentsContainer = document.getElementById("students-list");
+        studentsContainer.innerHTML = "";
 
-        if (!jsonData.table.cols || jsonData.table.cols.length === 0) {
-            console.warn("⚠️ Aucune donnée trouvée dans la feuille !");
-            document.getElementById("student-list").innerHTML = "<p>⚠️ Aucun élève trouvé !</p>";
-            return;
-        }
-
-        // Extraction des en-têtes (les noms des élèves sont à partir de la colonne 2)
-        const headers = jsonData.table.cols.map(col => col.label.trim());
-        console.log("📊 En-têtes récupérées :", headers);
-
-        // Générer la liste des élèves (en ignorant la première colonne qui est "Compétence")
-        let studentListHTML = "<ul>";
-        for (let i = 1; i < headers.length; i++) { // Commence à 1 pour ignorer "Compétence"
-            if (headers[i]) { // Vérifie que le nom de l'élève existe
-                studentListHTML += `<li><a href="eleve.html?name=${encodeURIComponent(headers[i])}">${headers[i]}</a></li>`;
+        headers.forEach(name => {
+            if (name) { // Vérifie que le nom existe
+                let link = document.createElement("a");
+                link.href = `eleve.html?name=${encodeURIComponent(name)}`;
+                link.textContent = name;
+                link.style.display = "block";
+                studentsContainer.appendChild(link);
             }
-        }
-        studentListHTML += "</ul>";
+        });
 
-        document.getElementById("student-list").innerHTML = studentListHTML;
-    })
-    .catch(error => {
-        console.error("❌ Erreur lors de la récupération des données :", error);
-        document.getElementById("student-list").innerHTML = "<p>❌ Erreur lors du chargement des élèves.</p>";
-    });
+    } catch (error) {
+        console.error("❌ Erreur lors du chargement des élèves :", error);
+    }
+}
+
+// Charger les élèves au démarrage
+fetchStudents();
+
