@@ -1,3 +1,7 @@
+console.log("Chargement du script eleve.js...");
+console.log("Nom de l'élève sélectionné :", studentName);
+console.log("API URL :", apiURL);
+
 // Remplace ceci par ton ID Google Sheets
 const sheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg"; // Mets ici ton vrai ID Google Sheets
 const sheetName = "Feuille1"; 
