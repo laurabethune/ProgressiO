@@ -1,6 +1,6 @@
 console.log("📄 Chargement du script eleve.js...");
 
-// 🔹 Récupération du nom de l'élève depuis l'URL
+// 🔹 Vérification et récupération du nom de l'élève depuis l'URL
 const urlParams = new URLSearchParams(window.location.search);
 const studentName = urlParams.get('name');
 
@@ -13,9 +13,9 @@ if (!studentName) {
     console.log("✅ Élève détecté :", studentName);
 }
 
-// 🔹 URL de l'API Google Sheets (remplace avec ton propre ID de fichier)
-const spreadsheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg";
-const sheetName = "Compétences";  // Remplace par le nom exact de ta feuille
+// 🔹 URL de l'API Google Sheets
+const spreadsheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg";  // Mets ici l'ID de ton fichier Google Sheets
+const sheetName = "Compétences";  // Mets ici le nom exact de ta feuille
 const apiURL = `https://docs.google.com/spreadsheets/d/${spreadsheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
 console.log("🌍 API URL :", apiURL);
@@ -26,7 +26,7 @@ fetch(apiURL)
     .then(data => {
         console.log("✅ Vérification : eleve.js est bien chargé !");
         
-        // Nettoyage de la réponse pour récupérer le JSON
+        // Nettoyage du format JSON renvoyé par Google Sheets
         const jsonData = JSON.parse(data.substring(47, data.length - 2));
         const rows = jsonData.table.rows;
 
@@ -39,11 +39,11 @@ fetch(apiURL)
             return;
         }
 
-        // 🔹 Détection des colonnes
+        // 🔹 Extraction des en-têtes
         const headers = jsonData.table.cols.map(col => col.label);
         console.log("📊 Colonnes détectées :", headers);
 
-        // Trouver l'index de l'élève dans les colonnes
+        // Trouver la colonne de l'élève
         const studentIndex = headers.indexOf(studentName);
         if (studentIndex === -1) {
             console.warn(`⚠️ Aucun élève trouvé avec ce nom : ${studentName}`);
@@ -51,17 +51,17 @@ fetch(apiURL)
             return;
         }
 
-        // 🔹 Création du tableau des compétences
+        // 🔹 Création du tableau HTML
         let tableHTML = `<table border="1">
                             <tr>
                                 <th>Compétence</th>
                                 <th>Niveau</th>
                             </tr>`;
 
-        // Lire les données et ajouter au tableau
+        // Ajout des compétences et niveaux
         rows.forEach(row => {
-            const competence = row.c[0]?.v || "Inconnue";  // Colonne 1 : Compétence
-            const niveau = row.c[studentIndex]?.v || "Non évalué";  // Colonne de l'élève
+            const competence = row.c[0]?.v || "Inconnue";  // Première colonne : compétence
+            const niveau = row.c[studentIndex]?.v || "Non évalué";  // Colonne correspondant à l'élève
             
             tableHTML += `<tr>
                             <td>${competence}</td>
@@ -78,3 +78,4 @@ fetch(apiURL)
         console.error("❌ Erreur lors du chargement des données :", error);
         document.getElementById("student-data").innerHTML = "<p>⚠️ Impossible de charger les données.</p>";
     });
+
