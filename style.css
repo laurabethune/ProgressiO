@@ -1,120 +1,80 @@
+/* Styles généraux */
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #f4f4f4;
-}
-
-h1 {
-  color: #333;
-}
-
-.student {
-  background: white;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-}
-
-.badges {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.badge {
-  padding: 5px 10px;
-  background-color: gold;
-  border-radius: 5px;
-  font-weight: bold;
-}
-table {
-    width: 50%;
-    margin: auto; /* Centre le tableau */
-    border-collapse: collapse;
-    text-align: center;
     font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
 }
 
-th, td {
-    border: 1px solid black;
-    padding: 10px;
+/* Titre */
+h1 {
+    color: #333;
 }
 
-th {
-    background-color: #4CAF50; /* Vert pour les titres */
-    color: white;
-}
-
-td {
-    background-color: #f2f2f2; /* Fond gris clair */
-}
-
-/* Ajout de couleur selon le niveau */
-td:contains("Expert") {
-    background-color: #4CAF50; /* Vert */
-    color: white;
-}
-
-td:contains("Averti") {
-    background-color: #FFC107; /* Jaune */
-}
-
-td:contains("Débrouillé") {
-    background-color: #FF9800; /* Orange */
-}
-
-td:contains("Novice") {
-    background-color: #F44336; /* Rouge */
-    color: white;
-}
-/* Centre le contenu */
+/* Conteneur principal */
 .container {
     text-align: center;
-    margin-top: 20px;
+    margin: auto;
+    max-width: 800px;
 }
 
 /* Style du tableau */
 table {
-    width: 60%;
+    width: 80%; /* Ajusté pour être plus centré */
     margin: 20px auto;
     border-collapse: collapse;
     text-align: center;
-    font-family: Arial, sans-serif;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
 }
 
+/* Style des cellules */
 th, td {
     border: 1px solid black;
     padding: 12px;
     font-size: 16px;
 }
 
+/* En-tête du tableau */
 th {
-    background-color: #4CAF50; /* Vert pour les titres */
+    background-color: #4CAF50;
     color: white;
 }
 
-/* Couleurs selon le niveau */
-td {
-    background-color: #f2f2f2; /* Fond gris clair par défaut */
-}
-
-td:contains("Expert") {
+/* Ajout de couleurs selon le niveau */
+td[data-level="Expert"] {
     background-color: #4CAF50; /* Vert */
     color: white;
 }
 
-td:contains("Averti") {
+td[data-level="Averti"] {
     background-color: #FFC107; /* Jaune */
 }
 
-td:contains("Débrouillé") {
+td[data-level="Débrouillé"] {
     background-color: #FF9800; /* Orange */
 }
 
-td:contains("Novice") {
+td[data-level="Novice"] {
     background-color: #F44336; /* Rouge */
     color: white;
+}
+
+/* Badges */
+.badges {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.badge {
+    padding: 5px 10px;
+    background-color: gold;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 /* Bouton retour */
@@ -131,3 +91,4 @@ td:contains("Novice") {
 .btn-retour:hover {
     background-color: #0056b3;
 }
+
