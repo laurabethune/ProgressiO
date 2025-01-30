@@ -18,11 +18,39 @@
             </tr>
         </thead>
         <tbody id="student-data">
-            <tr><td colspan="2">Chargement des compétences...</td></tr>
+            <tr><td colspan="2">Chargement...</td></tr>
         </tbody>
     </table>
 
     <a href="index.html">Retour</a>
-    <script src="eleve.js"></script>
+
+    <script>
+        const apiURL = "TON_URL_API";  // Remplace par ton URL Google Apps Script
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentName = urlParams.get("name");
+        document.getElementById("student-name").textContent = studentName;
+
+        fetch(apiURL)
+            .then(response => response.json())
+            .then(data => {
+                let studentData = document.getElementById("student-data");
+                studentData.innerHTML = "";
+
+                if (!data[studentName]) {
+                    studentData.innerHTML = `<tr><td colspan="2">Aucune donnée trouvée.</td></tr>`;
+                    return;
+                }
+
+                data[studentName].forEach(entry => {
+                    let tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${entry.competence}</td><td>${entry.niveau}</td>`;
+                    studentData.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error("Erreur API :", error);
+            });
+    </script>
 </body>
 </html>
