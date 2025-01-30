@@ -1,5 +1,5 @@
 // Récupérer l’ID du Google Sheets
-const sheetID = "18vBzcHkPj1ZMtloOR72oRKPy_mFGXAsz4grHy2SO_lM/edit?gid=0#gid=0"; // Remplace par ton vrai ID Google Sheets
+const sheetID = "18vBzcHkPj1ZMtloOR72oRKPy_mFGXAsz4grHy2SO_lM"; // Remplace par ton vrai ID Google Sheets
 const sheetName = "Feuille1"; 
 
 // URL de l'API Google Sheets
