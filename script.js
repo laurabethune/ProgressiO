@@ -1,25 +1,31 @@
-// Liste des élèves et leurs compétences
-let students = [
-    { name: "Alex", skills: ["Vente", "Accueil Client"], badges: ["Badge Vente", "Badge Communication"] },
-    { name: "Julie", skills: ["Marketing", "Stratégie"], badges: ["Badge Marketing"] }
-];
+// Remplace ceci par ton ID Google Sheets
+const sheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg"; // Mets ici ton vrai ID Google Sheets
+const sheetName = "Feuille1"; 
 
-// Fonction pour afficher les élèves et leurs badges
-function displayStudents() {
-    let container = document.getElementById("students");
-    container.innerHTML = "";  // Nettoyage avant affichage
+// URL de l'API Google Sheets
+const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&tq&sheet=${sheetName}`;
 
-    students.forEach(student => {
-        let div = document.createElement("div");
-        div.classList.add("student");
-        div.innerHTML = `<h2>${student.name}</h2>
-                         <p>Compétences : ${student.skills.join(", ")}</p>
-                         <div class="badges">
-                             ${student.badges.map(badge => `<span class="badge">${badge}</span>`).join("")}
-                         </div>`;
-        container.appendChild(div);
-    });
+// Fonction pour récupérer la liste des élèves et l'afficher
+async function loadStudentsList() {
+    try {
+        const response = await fetch(apiURL);
+        const text = await response.text();
+        const jsonData = JSON.parse(text.substr(47).slice(0, -2)); // Convertit en JSON
+
+        let studentsList = document.getElementById("students-list");
+        studentsList.innerHTML = ""; // Vide la liste avant de la remplir
+
+        jsonData.table.rows.forEach(row => {
+            let studentName = row.c[0]?.v || "Inconnu"; // Récupère le nom de l'élève
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `<a href="eleve.html?name=${encodeURIComponent(studentName)}">${studentName}</a>`;
+            studentsList.appendChild(listItem);
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+    }
 }
 
-// Charger les élèves
-window.onload = displayStudents;
+// Charger la liste des élèves au démarrage
+loadStudentsList();
