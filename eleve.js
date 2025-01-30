@@ -14,7 +14,7 @@ if (!studentName) {
 }
 
 // 🔹 Remplace ici par TON ID de Google Sheets
-const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
+const apiURL = "https://script.google.com/macros/s/AKfycby-iInF7yef8ABF7Ik10a1PuVYBnxOZzTjvDsbGTf6reerS9tVd91qXH1QuBW3BXrTt/exec
 
 async function fetchStudentData() {
     try {
