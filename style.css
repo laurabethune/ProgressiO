@@ -28,3 +28,43 @@ h1 {
   border-radius: 5px;
   font-weight: bold;
 }
+table {
+    width: 50%;
+    margin: auto; /* Centre le tableau */
+    border-collapse: collapse;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+th {
+    background-color: #4CAF50; /* Vert pour les titres */
+    color: white;
+}
+
+td {
+    background-color: #f2f2f2; /* Fond gris clair */
+}
+
+/* Ajout de couleur selon le niveau */
+td:contains("Expert") {
+    background-color: #4CAF50; /* Vert */
+    color: white;
+}
+
+td:contains("Averti") {
+    background-color: #FFC107; /* Jaune */
+}
+
+td:contains("Débrouillé") {
+    background-color: #FF9800; /* Orange */
+}
+
+td:contains("Novice") {
+    background-color: #F44336; /* Rouge */
+    color: white;
+}
