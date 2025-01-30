@@ -1,9 +1,5 @@
 console.log("🔄 Chargement du script eleve.js...");
 
-// Vérifier si urlParams n'est pas déjà déclaré
-if (typeof urlParams === "undefined") {
-    var urlParams = new URLSearchParams(window.location.search);
-}
 
 const studentName = urlParams.get('name');
 console.log("👤 Nom de l'élève sélectionné :", studentName);
