@@ -1,24 +1,22 @@
-console.log("Chargement du script eleve.js...");
+console.log("🚀 Chargement du script eleve.js...");
 
-// 🔹 Déclaration de studentName AVANT son utilisation
+// ✅ Vérifie si l'URL contient bien "name=..."
 const urlParams = new URLSearchParams(window.location.search);
-const studentName = urlParams.get('name'); // Récupération du nom de l'élève dans l'URL
+const studentName = urlParams.get('name'); // Récupère la valeur du paramètre "name"
 
-console.log("Nom de l'élève sélectionné :", studentName);
+console.log("🔍 Paramètres URL détectés :", window.location.search);
+console.log("📌 Nom de l'élève récupéré :", studentName);
 
-// Vérifier si un nom d'élève a bien été trouvé
-if (!studentName) {alex
+// Vérification et affichage dans la page
+if (!studentName) {
     console.error("❌ Aucun élève trouvé dans l'URL !");
+    alert("Erreur : Aucun élève détecté. Vérifiez l'URL.");
 } else {
     console.log("✅ Élève détecté :", studentName);
+    document.body.innerHTML += `<h1>Bienvenue, ${studentName} !</h1>`;
 }
 
-// 🔹 Déclare aussi apiURL avant de l'afficher
+// ✅ Déclare aussi l'URL API
 const apiURL = "https://docs.google.com/spreadsheets/d/.../gviz/tq?tqx=out:json";
-console.log("API URL :", apiURL);
-
-
-        if (!studentFound) {
-            console.warn("⚠️ Aucun élève trouvé !");
-            studentData.innerHTML = `<p>Aucune donnée trouvée pour l'élève 
+console.log("🌐 API URL :", apiURL);
 
