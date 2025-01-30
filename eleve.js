@@ -1,14 +1,20 @@
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("🔄 Chargement des données...");
-    
+
+    // 🔹 Déclaration de studentName avant toute utilisation
     const urlParams = new URLSearchParams(window.location.search);
-    const studentName = urlParams.get('name'); // Récupération du nom de l'élève depuis l'URL
+    const studentName = urlParams.get('name'); // Récupération du nom de l'élève
 
     if (!studentName) {
         console.error("❌ Aucun élève spécifié dans l'URL.");
         document.getElementById("student-data").innerHTML = "<p>Erreur : Nom d'élève non trouvé.</p>";
         return;
     }
+
+    console.log("👤 Élève sélectionné :", studentName);
+
+    // 🔹 URL de ton fichier JSON Google Sheets (à remplacer)
+    const apiURL = "https://docs.google.com/spreadsheets/d/.../gviz/tq?tqx=out:json";
 
     try {
         console.log("📡 Récupération des données...");
@@ -17,19 +23,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         console.log("📄 Réponse brute :", text);
 
-        // Extraction des données JSON en contournant la structure spécifique de Google Sheets
+        // 🔹 Extraction correcte du JSON
         const jsonData = JSON.parse(text.substr(47).slice(0, -2));
-
         console.log("✅ JSON extrait :", jsonData);
 
         let studentData = document.getElementById("student-data");
-        studentData.innerHTML = ""; // On vide le contenu précédent
+        studentData.innerHTML = ""; // Vider l'affichage précédent
 
         let studentFound = false;
 
-        // 🔹 Ignorer la première ligne du JSON qui contient les titres des colonnes
+        // 🔹 Ignorer la première ligne qui contient les titres
         jsonData.table.rows.slice(1).forEach(row => {
-            if (row.c[0]?.v === studentName) { // Vérification du nom
+            if (row.c[0]?.v === studentName) {
                 studentFound = true;
                 studentData.innerHTML = `<table border="1">
                     <tr><th>Compétence 1</th><th>Compétence 2</th><th>Compétence 3</th><th>Badges</th></tr>
@@ -45,12 +50,5 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         if (!studentFound) {
             console.warn("⚠️ Aucun élève trouvé !");
-            studentData.innerHTML = `<p>Aucune donnée trouvée pour l'élève : <strong>${studentName}</strong></p>`;
-        }
-
-    } catch (error) {
-        console.error("🚨 Erreur lors de la récupération des données :", error);
-        document.getElementById("student-data").innerHTML = "<p>Erreur de chargement des compétences. Vérifiez l'ID Google Sheets et les permissions.</p>";
-    }
-});
+            studentData.innerHTML = `<p>Aucune donnée trouvée pour l'élève 
 
