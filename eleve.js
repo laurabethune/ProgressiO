@@ -1,6 +1,6 @@
 console.log("📄 Chargement du script eleve.js...");
 
-// 🔹 Vérification et récupération du nom de l'élève depuis l'URL
+// Vérification et récupération du nom de l'élève depuis l'URL
 const urlParams = new URLSearchParams(window.location.search);
 const studentName = urlParams.get('name');
 
