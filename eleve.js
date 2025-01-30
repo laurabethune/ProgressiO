@@ -1,39 +1,55 @@
-console.log("📌 Chargement du script accueil.js...");
+console.log("📌 Chargement du script eleve.js...");
 
-const apiURL = "const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
-";
+// 🔹 Récupérer le nom de l'élève depuis l'URL
+const urlParams = new URLSearchParams(window.location.search);
+const studentName = urlParams.get('name');
 
-// Fonction pour récupérer les noms des élèves
-async function fetchStudents() {
+console.log("👤 Élève sélectionné :", studentName);
+
+if (!studentName) {
+    console.error("❌ Aucun élève sélectionné !");
+    document.getElementById("student-name").innerText = "Aucun élève sélectionné.";
+} else {
+    document.getElementById("student-name").innerText = studentName;
+}
+
+// 🔹 Remplace ici par TON ID de Google Sheets
+const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
+
+async function fetchStudentData() {
     try {
         const response = await fetch(apiURL);
         const text = await response.text();
         const json = JSON.parse(text.substring(47, text.length - 2));
-
-        // Récupérer les en-têtes de colonne (les noms des élèves)
-        const headers = json.table.cols.map(col => col.label).slice(1); // Ignorer la première colonne (Compétences)
         
-        console.log("📝 Liste des élèves trouvés :", headers);
+        let data = json.table.rows;
+        let studentDataDiv = document.getElementById("student-data");
 
-        // Affichage des élèves dans la page
-        const studentsContainer = document.getElementById("students-list");
-        studentsContainer.innerHTML = "";
+        let studentIndex = json.table.cols.findIndex(col => col.label === studentName);
 
-        headers.forEach(name => {
-            if (name) { // Vérifie que le nom existe
-                let link = document.createElement("a");
-                link.href = `eleve.html?name=${encodeURIComponent(name)}`;
-                link.textContent = name;
-                link.style.display = "block";
-                studentsContainer.appendChild(link);
-            }
+        if (studentIndex === -1) {
+            console.warn("⚠️ Élève non trouvé :", studentName);
+            studentDataDiv.innerHTML = `<p>⚠️ Aucun élève trouvé avec ce nom : <strong>${studentName}</strong></p>`;
+            return;
+        }
+
+        // 🔹 Construire le tableau des compétences
+        let tableHTML = "<table border='1'><tr><th>Compétence</th><th>Niveau</th></tr>";
+
+        data.forEach(row => {
+            let competence = row.c[0]?.v || "Inconnue";
+            let niveau = row.c[studentIndex]?.v || "Non évalué";
+            tableHTML += `<tr><td>${competence}</td><td>${niveau}</td></tr>`;
         });
 
+        tableHTML += "</table>";
+        studentDataDiv.innerHTML = tableHTML;
+
     } catch (error) {
-        console.error("❌ Erreur lors du chargement des élèves :", error);
+        console.error("❌ Erreur lors du chargement des données :", error);
+        document.getElementById("student-data").innerHTML = "<p>Erreur de chargement des données.</p>";
     }
 }
 
-// Charger les élèves au démarrage
-fetchStudents();
-
+// Charger les données de l'élève au démarrage
+fetchStudentData();
