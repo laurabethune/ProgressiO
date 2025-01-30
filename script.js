@@ -29,4 +29,3 @@ async function loadStudentsList() {
 
 // Charger la liste des élèves au démarrage
 loadStudentsList();
-
