@@ -91,4 +91,83 @@ td[data-level="Novice"] {
 .btn-retour:hover {
     background-color: #0056b3;
 }
+/* Styles généraux */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Titre */
+h1 {
+    color: #333;
+}
+
+/* Conteneur principal */
+.container {
+    text-align: center;
+    margin: auto;
+    max-width: 800px;
+}
+
+/* Style du tableau */
+table {
+    width: 60%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Style des cellules */
+th, td {
+    border: 1px solid black;
+    padding: 12px;
+    font-size: 16px;
+}
+
+/* En-tête du tableau */
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Ajout de couleurs selon le niveau */
+td[data-level="Expert"] {
+    background-color: #4CAF50; /* Vert */
+    color: white;
+}
+
+td[data-level="Averti"] {
+    background-color: #FFC107; /* Jaune */
+}
+
+td[data-level="Débrouillé"] {
+    background-color: #FF9800; /* Orange */
+}
+
+td[data-level="Novice"] {
+    background-color: #F44336; /* Rouge */
+    color: white;
+}
+
+/* Bouton retour */
+.btn-retour {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-retour:hover {
+    background-color: #0056b3;
+}
 
