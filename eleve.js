@@ -16,7 +16,9 @@ if (studentName) {
 }
 
 // 3️⃣ Définition de l'URL de l'API Google Sheets
-const apiURL = "https://docs.google.com/spreadsheets/d/.../gviz/tq?tqx=out:json";
+const apiURL = "https://script.google.com/macros/s/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/exec";
+console.log("API URL :", apiURL);
+
 
 console.log("🌐 API URL :", apiURL);
 
