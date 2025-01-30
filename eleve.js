@@ -7,7 +7,7 @@ const studentName = urlParams.get('name'); // Récupération du nom de l'élève
 console.log("Nom de l'élève sélectionné :", studentName);
 
 // Vérifier si un nom d'élève a bien été trouvé
-if (!studentName) {
+if (!studentName) {alex
     console.error("❌ Aucun élève trouvé dans l'URL !");
 } else {
     console.log("✅ Élève détecté :", studentName);
