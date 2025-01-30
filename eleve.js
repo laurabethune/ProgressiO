@@ -69,3 +69,9 @@ function getCouleurNiveau(niveau) {
 
 // 🔹 Charger les données
 fetchCompetences();
+fetch(apiURL)
+    .then(response => response.text())
+    .then(data => {
+        console.log("Données brutes reçues :", data); // 🔍 Vérifier si les données contiennent les élèves
+    });
+
