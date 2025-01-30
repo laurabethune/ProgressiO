@@ -1,58 +1,80 @@
-console.log("🔄 Chargement du script eleve.js...");
+console.log("📄 Chargement du script eleve.js...");
 
-
-
+// 🔹 Récupération du nom de l'élève depuis l'URL
+const urlParams = new URLSearchParams(window.location.search);
 const studentName = urlParams.get('name');
+
 console.log("👤 Nom de l'élève sélectionné :", studentName);
 
+// Vérifier si un nom d'élève a bien été trouvé
 if (!studentName) {
     console.error("❌ Aucun élève trouvé dans l'URL !");
 } else {
     console.log("✅ Élève détecté :", studentName);
 }
 
-// 🔹 Définition de l'URL de l'API Google Sheets
-const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
+// 🔹 URL de l'API Google Sheets (remplace avec ton propre ID de fichier)
+const spreadsheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg";
+const sheetName = "Compétences";  // Remplace par le nom exact de ta feuille
+const apiURL = `https://docs.google.com/spreadsheets/d/${spreadsheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
-async function fetchCompetences() {
-    try {
-        const response = await fetch(apiURL);
-        const text = await response.text();
-        const jsonData = JSON.parse(text.substring(47, text.length - 2));
+console.log("🌍 API URL :", apiURL);
+
+// 🔹 Récupération des données depuis Google Sheets
+fetch(apiURL)
+    .then(response => response.text())
+    .then(data => {
+        console.log("✅ Vérification : eleve.js est bien chargé !");
+        
+        // Nettoyage de la réponse pour récupérer le JSON
+        const jsonData = JSON.parse(data.substring(47, data.length - 2));
         const rows = jsonData.table.rows;
 
-        console.log("📊 Données brutes reçues :", jsonData);
+        console.log("📊 Données brutes reçues :", rows);
 
-        if (!jsonData.table.cols || jsonData.table.cols.length === 0) {
-            console.error("❌ Erreur : Les colonnes sont vides. Vérifie que la feuille Google Sheets est bien remplie !");
-            document.getElementById("student-data").innerHTML = `<p>⚠️ Problème de récupération des données. Vérifie que la feuille est bien publique.</p>`;
+        // Vérifier si les données existent
+        if (!rows || rows.length === 0) {
+            console.warn("⚠️ Aucune donnée trouvée dans la feuille !");
+            document.getElementById("student-data").innerHTML = "<p>⚠️ Impossible de charger les données.</p>";
             return;
         }
 
+        // 🔹 Détection des colonnes
         const headers = jsonData.table.cols.map(col => col.label);
-        console.log("📝 En-têtes des colonnes détectées :", headers);
+        console.log("📊 Colonnes détectées :", headers);
 
+        // Trouver l'index de l'élève dans les colonnes
         const studentIndex = headers.indexOf(studentName);
         if (studentIndex === -1) {
             console.warn(`⚠️ Aucun élève trouvé avec ce nom : ${studentName}`);
-            document.getElementById("student-data").innerHTML = `<p>⚠️ Aucun élève trouvé avec ce nom : <b>${studentName}</b>. Vérifie l'orthographe et la feuille Google Sheets.</p>`;
+            document.getElementById("student-data").innerHTML = `<p>⚠️ Aucun élève trouvé avec ce nom : <strong>${studentName}</strong>.</p>`;
             return;
         }
 
-        let tableHTML = "<table border='1'><tr><th>Compétence</th><th>Niveau</th></tr>";
-        rows.forEach(row => {
-            const competence = row.c[0]?.v || "❌ Erreur";
-            const niveau = row.c[studentIndex]?.v || "Non évalué";
-            tableHTML += `<tr><td>${competence}</td><td>${niveau}</td></tr>`;
-        });
-        tableHTML += "</table>";
+        // 🔹 Création du tableau des compétences
+        let tableHTML = `<table border="1">
+                            <tr>
+                                <th>Compétence</th>
+                                <th>Niveau</th>
+                            </tr>`;
 
+        // Lire les données et ajouter au tableau
+        rows.forEach(row => {
+            const competence = row.c[0]?.v || "Inconnue";  // Colonne 1 : Compétence
+            const niveau = row.c[studentIndex]?.v || "Non évalué";  // Colonne de l'élève
+            
+            tableHTML += `<tr>
+                            <td>${competence}</td>
+                            <td>${niveau}</td>
+                          </tr>`;
+        });
+
+        tableHTML += "</table>";
         document.getElementById("student-data").innerHTML = tableHTML;
 
-    } catch (error) {
-        console.error("❌ Erreur lors du chargement des compétences :", error);
+        console.log("✅ Affichage des compétences terminé !");
+    })
+    .catch(error => {
+        console.error("❌ Erreur lors du chargement des données :", error);
         document.getElementById("student-data").innerHTML = "<p>⚠️ Impossible de charger les données.</p>";
-    }
-}
-
-fetchCompetences();
+    });
