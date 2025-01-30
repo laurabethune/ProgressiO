@@ -1,77 +1,89 @@
 console.log("Chargement du script eleve.js...");
 
-// 🔹 Récupération du nom de l'élève dans l'URL
+// 1️⃣ Récupérer le nom de l'élève depuis l'URL
 const urlParams = new URLSearchParams(window.location.search);
-const studentName = urlParams.get('name'); // Ex: "Alex"
+const studentName = urlParams.get('name');
 
 console.log("Nom de l'élève sélectionné :", studentName);
 
-// Vérifier si un nom d'élève est bien trouvé
+// Sélection de l'élément où afficher les données
+const studentTitle = document.getElementById("student-name");
+const studentData = document.getElementById("student-data");
+
+// 2️⃣ Vérifier si le nom d'élève est bien fourni
 if (!studentName) {
-    console.error("❌ Aucun élève trouvé dans l'URL !");
-    document.getElementById("student-data").innerHTML = `<p>❌ Aucun élève sélectionné.</p>`;
-} else {
-    console.log("✅ Élève détecté :", studentName);
+    studentTitle.innerText = "Aucun élève sélectionné";
+    studentData.innerHTML = `<p style="color:red;">⚠️ Aucun élève trouvé dans l'URL.</p>`;
+    throw new Error("Nom d'élève manquant dans l'URL.");
 }
 
-// 🔹 URL de l'API Google Sheets
-const SHEET_ID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg";  // Remplace par TON ID
-const API_URL_COMPETENCES = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&tq=SELECT *&sheet=Compétences`;
+// 3️⃣ API Google Sheets (à remplacer avec ton ID)
+const sheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg";
+const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
-// Fonction pour récupérer les compétences
-async function fetchCompetences() {
-    try {
-        const response = await fetch(API_URL_COMPETENCES);
-        const text = await response.text();
-        const jsonData = JSON.parse(text.substring(47, text.length - 2));
-
-        const table = jsonData.table.cols.map(col => col.label);
-        const rows = jsonData.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
-
-        console.log("Données des compétences :", rows);
-
-        // 🔹 Trouver la colonne de l'élève
-        const studentIndex = table.indexOf(studentName);
-        if (studentIndex === -1) {
-            console.warn("⚠️ Élève non trouvé dans la feuille Compétences !");
-            document.getElementById("student-data").innerHTML = `<p>⚠️ Aucune donnée trouvée pour ${studentName}.</p>`;
-            return;
-        }
-
-        // 🔹 Générer le tableau des compétences
-        let tableHTML = `<table border="1"><tr><th>Compétence</th><th>Niveau</th></tr>`;
-        rows.forEach(row => {
-            if (row[0]) {
-                let niveau = row[studentIndex] || "Non évalué";
-                let couleur = getCouleurNiveau(niveau);
-                tableHTML += `<tr><td>${row[0]}</td><td style="background-color:${couleur};">${niveau}</td></tr>`;
-            }
-        });
-        tableHTML += `</table>`;
-        document.getElementById("student-data").innerHTML = tableHTML;
-
-    } catch (error) {
-        console.error("❌ Erreur lors du chargement des compétences :", error);
-        document.getElementById("student-data").innerHTML = `<p>❌ Impossible de charger les compétences.</p>`;
-    }
-}
-
-// 🔹 Fonction pour assigner des couleurs aux niveaux
-function getCouleurNiveau(niveau) {
-    switch (niveau.toLowerCase()) {
-        case "expert": return "#4CAF50";  // Vert
-        case "averti": return "#2196F3";  // Bleu
-        case "débrouillé": return "#FFC107";  // Jaune
-        case "novice": return "#F44336";  // Rouge
-        default: return "#E0E0E0";  // Gris
-    }
-}
-
-// 🔹 Charger les données
-fetchCompetences();
+// 4️⃣ Charger les données depuis Google Sheets
 fetch(apiURL)
     .then(response => response.text())
     .then(data => {
-        console.log("Données brutes reçues :", data); // 🔍 Vérifier si les données contiennent les élèves
-    });
+        // Nettoyage des données JSON (Google Sheets rajoute un préfixe inutile)
+        const jsonData = JSON.parse(data.substring(47).slice(0, -2));
+        console.log("Données reçues :", jsonData);
 
+        const rows = jsonData.table.rows;
+        const cols = jsonData.table.cols.map(col => col.label);
+
+        // Vérifier que le tableau contient bien des données
+        if (!rows || rows.length === 0) {
+            studentData.innerHTML = `<p style="color:red;">⚠️ Impossible de charger les données.</p>`;
+            return;
+        }
+
+        // Construire un objet avec les données par élève
+        let studentsData = {};
+        rows.forEach(row => {
+            const competence = row.c[0]?.v; // Colonne 1 = compétence
+
+            // Stocker les niveaux des élèves
+            for (let i = 1; i < cols.length; i++) {
+                const student = cols[i]; // Nom de l'élève en colonne
+                const level = row.c[i]?.v || "Non évalué"; // Niveau
+
+                if (!studentsData[student]) studentsData[student] = {};
+                studentsData[student][competence] = level;
+            }
+        });
+
+        console.log("Données formatées :", studentsData);
+
+        // Vérifier si l'élève existe dans la liste
+        if (!studentsData[studentName]) {
+            studentData.innerHTML = `<p style="color:red;">⚠️ Aucun élève trouvé avec ce nom.</p>`;
+            return;
+        }
+
+        studentTitle.innerText = studentName;
+
+        // 5️⃣ Générer le tableau HTML des compétences
+        let tableHTML = `<table border="1" cellpadding="5">
+            <thead>
+                <tr>
+                    <th>Compétence</th>
+                    <th>Niveau</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        Object.entries(studentsData[studentName]).forEach(([competence, niveau]) => {
+            tableHTML += `<tr>
+                <td>${competence}</td>
+                <td>${niveau}</td>
+            </tr>`;
+        });
+
+        tableHTML += `</tbody></table>`;
+        studentData.innerHTML = tableHTML;
+    })
+    .catch(error => {
+        console.error("Erreur API :", error);
+        studentData.innerHTML = `<p style="color:red;">❌ Erreur lors de la récupération des données.</p>`;
+    });
