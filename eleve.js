@@ -1,6 +1,7 @@
 console.log("📌 Chargement du script accueil.js...");
 
-const apiURL = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:json";
+const apiURL = "const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
+";
 
 // Fonction pour récupérer les noms des élèves
 async function fetchStudents() {
