@@ -8,13 +8,29 @@
 </head>
 <body>
     <h1>Plateforme de Suivi des Compétences</h1>
-    <p>Sélectionnez un élève pour voir ses compétences :</p>
+    <p>Sélectionnez un élève :</p>
 
-    <h2>Liste des élèves :</h2>
     <ul id="student-list">
-        <p>Chargement des élèves...</p>
+        <p>Chargement...</p>
     </ul>
 
-    <script src="accueil.js"></script>
+    <script>
+        const apiURL = "TON_URL_API";  // Remplace par ton URL Google Apps Script
+
+        fetch(apiURL)
+            .then(response => response.json())
+            .then(data => {
+                let studentList = document.getElementById("student-list");
+                studentList.innerHTML = "";
+                Object.keys(data).forEach(student => {
+                    let li = document.createElement("li");
+                    li.innerHTML = `<a href="eleve.html?name=${encodeURIComponent(student)}">${student}</a>`;
+                    studentList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error("Erreur API :", error);
+            });
+    </script>
 </body>
 </html>
