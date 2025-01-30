@@ -15,7 +15,7 @@ async function loadStudentsList() {
         let studentsList = document.getElementById("students-list");
         studentsList.innerHTML = ""; // Vide la liste avant de la remplir
 
-        jsonData.table.rows.forEach(row => {
+        jsonData.table.rows.slice(1).forEach(row => { // ⬅️ On saute la première ligne
             let studentName = row.c[0]?.v || "Inconnu"; // Récupère le nom de l'élève
             let listItem = document.createElement("li");
             listItem.innerHTML = `<a href="eleve.html?name=${encodeURIComponent(studentName)}">${studentName}</a>`;
@@ -29,3 +29,4 @@ async function loadStudentsList() {
 
 // Charger la liste des élèves au démarrage
 loadStudentsList();
+
