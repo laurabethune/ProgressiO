@@ -1,5 +1,5 @@
-// Récupérer l’ID du Google Sheets
-const sheetID = "18vBzcHkPj1ZMtloOR72oRKPy_mFGXAsz4grHy2SO_lM"; // Remplace par ton vrai ID Google Sheets
+// Remplace ceci par ton ID Google Sheets
+const sheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg"; // Mets ici ton vrai ID Google Sheets
 const sheetName = "Feuille1"; 
 
 // URL de l'API Google Sheets
@@ -11,7 +11,7 @@ const studentName = urlParams.get("name");
 
 document.getElementById("student-name").innerText = studentName;
 
-// Fonction pour charger les compétences d’un élève
+// Fonction pour charger les compétences de l'élève sélectionné
 async function loadStudentData() {
     try {
         const response = await fetch(apiURL);
@@ -21,8 +21,11 @@ async function loadStudentData() {
         let studentData = document.getElementById("student-data");
         studentData.innerHTML = ""; // Efface l’ancien contenu
 
+        let studentFound = false;
+
         jsonData.table.rows.forEach(row => {
             if (row.c[0]?.v === studentName) { // Vérifie si c’est l’élève sélectionné
+                studentFound = true;
                 studentData.innerHTML = `<table border="1">
                     <tr><th>Compétence 1</th><th>Compétence 2</th><th>Compétence 3</th><th>Badges</th></tr>
                     <tr>
@@ -35,10 +38,14 @@ async function loadStudentData() {
             }
         });
 
+        if (!studentFound) {
+            studentData.innerHTML = "<p>Aucune donnée trouvée pour cet élève.</p>";
+        }
+
     } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
+        document.getElementById("student-data").innerHTML = "<p>Erreur de chargement des compétences.</p>";
     }
 }
 
-// Charger les compétences de l’élève au démarrage
-loadStudentData();
+// Charger les compétences de l’élève au d
