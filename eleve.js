@@ -1,6 +1,7 @@
 console.log("🔄 Chargement du script eleve.js...");
 
 
+
 const studentName = urlParams.get('name');
 console.log("👤 Nom de l'élève sélectionné :", studentName);
 
