@@ -1,7 +1,7 @@
 console.log("🔄 Chargement du script eleve.js...");
 
 // 🔹 Récupération du nom de l'élève dans l'URL
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search);;
 const studentName = urlParams.get('name');
 
 console.log("👤 Nom de l'élève sélectionné :", studentName);
