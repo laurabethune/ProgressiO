@@ -1,42 +1,49 @@
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("Chargement du script index.js...");
+console.log("📌 Chargement du script index.js...");
 
-    const apiURL = "https://script.google.com/macros/s/AKfycbyiduq-gNcOsdrvFGQ4OMd8hK25MsevLQjY4ZdJDQ5VPZ7K0aPtTHR1EcHG_Yb5eArl/exec";
-    const studentsList = document.getElementById("students-list");
+// 📌 URL de l'API Google Apps Script
+const apiURL = "https://script.google.com/macros/s/AKfycbyiduq-gNcOsdrvFGQ4OMd8hK25MsevLQjY4ZdJDQ5VPZ7K0aPtTHR1EcHG_Yb5eArl/exec";
 
-    if (!studentsList) {
-        console.error("❌ Élément 'students-list' introuvable !");
-        return;
-    }
+// 📌 Sélection de l'élément où afficher la liste des élèves
+const studentsList = document.getElementById("students-list");
 
-    studentsList.innerHTML = "Chargement des élèves...";
+// 📌 Fonction pour récupérer et afficher les élèves
+function fetchStudents() {
+    console.log("📥 Tentative de récupération des élèves...");
 
     fetch(apiURL)
-        .then(response => response.json())
+        .then(response => response.json()) // Convertit la réponse en JSON
         .then(data => {
-            console.log("✅ Données récupérées :", data);
+            console.log("✅ Données reçues :", data); // Debug: affiche la réponse
 
-            if (!data || data.length === 0) {
-                studentsList.innerHTML = "<p>Aucun élève trouvé.</p>";
-                return;
+            // 📌 Vérification si data est un tableau
+            if (Array.isArray(data)) {
+                console.log("✅ Les données sont bien un tableau !");
+
+                // Vide la liste avant d'ajouter de nouveaux éléments
+                studentsList.innerHTML = "";
+
+                // Parcourir la liste des élèves et les afficher
+                data.forEach(student => {
+                    console.log("👨‍🎓 Élève :", student);
+
+                    // Créer un élément de liste
+                    const listItem = document.createElement("li");
+                    listItem.innerHTML = `<a href="eleve.html?name=${encodeURIComponent(student)}">${student}</a>`;
+
+                    // Ajouter l'élément à la liste
+                    studentsList.appendChild(listItem);
+                });
+
+            } else {
+                console.error("❌ Erreur : Les données ne sont pas un tableau !", data);
+                studentsList.innerHTML = "<li>Erreur : Données invalides</li>";
             }
-
-            studentsList.innerHTML = "";
-            console.log("Données reçues :", data);
-console.log("Type de data :", typeof data);
-            data.forEach(student => {
-                const studentLink = document.createElement("a");
-                studentLink.href = `eleve.html?name=${encodeURIComponent(student)}`;
-                studentLink.textContent = student;
-                studentLink.classList.add("student-link");
-
-                const listItem = document.createElement("li");
-                listItem.appendChild(studentLink);
-                studentsList.appendChild(listItem);
-            });
         })
         .catch(error => {
-            console.error("❌ Erreur lors de la récupération des élèves :", error);
-            studentsList.innerHTML = "<p>Erreur lors du chargement des élèves.</p>";
+            console.error("🚨 Erreur lors de la récupération des élèves :", error);
+            studentsList.innerHTML = "<li>Erreur lors du chargement des élèves</li>";
         });
-});
+}
+
+// 📌 Lancer la récupération des élèves quand la page est chargée
+document.addEventListener("DOMContentLoaded", fetchStudents);
