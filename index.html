@@ -3,34 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plateforme de Suivi des Compétences</title>
+    <title>Suivi des Compétences</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Plateforme de Suivi des Compétences</h1>
     <p>Sélectionnez un élève :</p>
-
-    <ul id="student-list">
-        <p>Chargement...</p>
-    </ul>
-
-    <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycby-iInF7yef8ABF7Ik10a1PuVYBnxOZzTjvDsbGTf6reerS9tVd91qXH1QuBW3BXrTt/exec";  // Remplace par ton URL Google Apps Script
-
-        fetch(apiURL)
-            .then(response => response.json())
-            .then(data => {
-                let studentList = document.getElementById("student-list");
-                studentList.innerHTML = "";
-                Object.keys(data).forEach(student => {
-                    let li = document.createElement("li");
-                    li.innerHTML = `<a href="eleve.html?name=${encodeURIComponent(student)}">${student}</a>`;
-                    studentList.appendChild(li);
-                });
-            })
-            .catch(error => {
-                console.error("Erreur API :", error);
-            });
-    </script>
+    <div id="student-list">Chargement...</div>
+    <script src="index.js"></script>
 </body>
 </html>
