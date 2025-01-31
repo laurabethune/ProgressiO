@@ -1,42 +1,35 @@
-// Fonction pour charger les données et ajouter les bonnes classes de couleur
-function afficherCompetences(data, studentName) {
-    const studentData = document.getElementById("student-data");
-    studentData.innerHTML = ""; // Nettoie le contenu
+const apiURL = "https://script.google.com/macros/s/AKfycbyiduq-gNcOsdrvFGQ4OMd8hK25MsevLQjY4ZdJDQ5VPZ7K0aPtTHR1EcHG_Yb5eArl/exec";
+const urlParams = new URLSearchParams(window.location.search);
+const studentName = urlParams.get('name');
 
-    if (!data || data.length === 0) {
-        studentData.innerHTML = `<p>⚠️ Aucune compétence trouvée pour <strong>${studentName}</strong>.</p>`;
-        return;
-    }
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("student-name").innerText = studentName;
 
-    // Créer le tableau
-    let table = document.createElement("table");
-    let thead = document.createElement("thead");
-    let tbody = document.createElement("tbody");
+    fetch(apiURL)
+        .then(response => response.json())
+        .then(data => {
+            if (!data || data.length === 0) {
+                document.getElementById("competence-table").innerHTML = "Aucune compétence trouvée.";
+                return;
+            }
 
-    // En-tête
-    thead.innerHTML = `
-        <tr>
-            <th>Compétence</th>
-            <th>Niveau</th>
-        </tr>`;
-    table.appendChild(thead);
+            const headers = data[0];  // En-têtes (nom des élèves)
+            const studentIndex = headers.indexOf(studentName);
+            if (studentIndex === -1) {
+                document.getElementById("competence-table").innerHTML = "Aucun élève trouvé avec ce nom.";
+                return;
+            }
 
-    // Ajouter les lignes des compétences
-    data.forEach(row => {
-        let tr = document.createElement("tr");
+            let html = `<table><tr><th>Compétence</th><th>Niveau</th></tr>`;
+            data.slice(1).forEach(row => {
+                html += `<tr><td>${row[0]}</td><td class="level-${row[studentIndex].toLowerCase()}">${row[studentIndex]}</td></tr>`;
+            });
+            html += `</table>`;
 
-        let competenceCell = document.createElement("td");
-        competenceCell.textContent = row[0]; // Nom de la compétence
-
-        let niveauCell = document.createElement("td");
-        niveauCell.textContent = row[1]; // Niveau
-        niveauCell.setAttribute("data-level", row[1]); // Ajoute un attribut pour le CSS
-
-        tr.appendChild(competenceCell);
-        tr.appendChild(niveauCell);
-        tbody.appendChild(tr);
-    });
-
-    table.appendChild(tbody);
-    studentData.appendChild(table);
-}
+            document.getElementById("competence-table").innerHTML = html;
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement des compétences :", error);
+            document.getElementById("competence-table").innerHTML = "Erreur de chargement.";
+        });
+});
