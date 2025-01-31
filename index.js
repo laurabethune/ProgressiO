@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             studentsList.innerHTML = "";
+            console.log("Données reçues :", data);
+console.log("Type de data :", typeof data);
             data.forEach(student => {
                 const studentLink = document.createElement("a");
                 studentLink.href = `eleve.html?name=${encodeURIComponent(student)}`;
