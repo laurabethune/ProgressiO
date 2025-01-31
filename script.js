@@ -3,7 +3,7 @@ const sheetID = "1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg"; // Mets ici ton 
 const sheetName = "Feuille1"; 
 
 // URL de l'API Google Sheets
-const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&tq&sheet=${sheetName}`;
+const apiURL = `AKfycbyiduq-gNcOsdrvFGQ4OMd8hK25MsevLQjY4ZdJDQ5VPZ7K0aPtTHR1EcHG_Yb5eArl`;
 
 // Fonction pour récupérer la liste des élèves et l'afficher
 async function loadStudentsList() {
