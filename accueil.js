@@ -1,7 +1,7 @@
 console.log("📌 Chargement du script accueil.js...");
 
 // 🔹 Remplace ici par TON ID de Google Sheets
-const apiURL = "https://docs.google.com/spreadsheets/d/1chnPStz0_dv50b2PRRRwsYzJXVJwPoAvhrtnpYa5vMg/gviz/tq?tqx=out:json";
+const apiURL = "AKfycbyiduq-gNcOsdrvFGQ4OMd8hK25MsevLQjY4ZdJDQ5VPZ7K0aPtTHR1EcHG_Yb5eArl";
 
 async function fetchStudents() {
     try {
